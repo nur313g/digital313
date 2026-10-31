@@ -18,5 +18,12 @@
     "kategori": "Aplikasi",
     "deskripsi": "Aplikasi pencatatan hutang piutang yang memudahkan Jaya Wenter mengelola riwayat hutang piutang dengan agen-agennya.",
     "gambar": "gambar/screenshot-394.png"
+  },
+  {
+    "judul": "Video Iklan AI",
+    "kategori": "Video",
+    "deskripsi": "Video iklan jasa usaha yang dibuat dengan AI",
+    "gambar": "gambar/screenshot-400.png",
+    "link": "https://youtube.com/shorts/ZfJ8-DQK_N0?si=SjPjBT_Y7a-417r2"
   }
 ]
