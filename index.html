@@ -70,7 +70,11 @@
     .win-front { inset: 24% 0 0 20%; border-color: #CBD1DB; animation: settle .7s .15s cubic-bezier(.2,.7,.2,1) both; }
     .win-bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); background: #FBFBFC; }
     .win-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
-    .win-body { padding: 16px; }
+    .win { display: flex; flex-direction: column; }
+    .win-bar { flex: none; }
+    .win-body { flex: 1; min-height: 0; padding: 16px; }
+    .win-body.foto { padding: 0; }
+    .win-body.foto img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .ln { height: 8px; border-radius: 4px; background: var(--line); margin-bottom: 9px; }
     .ln.dark { background: var(--ink); height: 12px; }
     .w60 { width: 60%; } .w80 { width: 80%; } .w100 { width: 100%; }
@@ -507,6 +511,20 @@
         });
       }
 
+      function isiHero(karya) {
+        var foto = daftar(karya).map(function (k) { return pathGambar(k && k.gambar); }).filter(Boolean);
+        var jendela = [document.querySelector(".win-front .win-body"), document.querySelector(".win-back .win-body")];
+        jendela.forEach(function (body, i) {
+          if (!foto[i] || !body) return;
+          body.className = "win-body foto";
+          body.innerHTML = "";
+          var img = document.createElement("img");
+          img.src = foto[i];
+          img.alt = "";
+          body.appendChild(img);
+        });
+      }
+
       function isiProduk(items) {
         var data = daftar(items).filter(function (p) { return p && p.judul; });
         if (!data.length) return;
@@ -551,6 +569,7 @@
       ]).then(function (d) {
         isiPengaturan(d[0]);
         isiKarya(d[1]);
+        isiHero(d[1]);
         isiJasa(d[2]);
         isiDaftar("steps", d[3]);
         isiDaftar("terms", d[4]);
