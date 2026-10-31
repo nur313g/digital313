@@ -1,0 +1,7 @@
+[
+  { "judul": "Uang muka (DP)", "deskripsi": "Pengerjaan dimulai setelah DP sebesar 50% dari total biaya dibayar." },
+  { "judul": "Pelunasan", "deskripsi": "Sisa pembayaran dilunasi setelah website selesai dan kamu setujui, sebelum file diserahkan atau website diterbitkan." },
+  { "judul": "Cara bayar", "deskripsi": "Transfer bank atau e-wallet. Nomor rekening saya kirim lewat WhatsApp setelah kita sepakat." },
+  { "judul": "Permintaan tambahan", "deskripsi": "Biaya sesuai penawaran. Pekerjaan di luar kesepakatan dihitung terpisah, dan baru dikerjakan setelah kamu setuju." },
+  { "judul": "Pembatalan", "deskripsi": "Jika proyek dibatalkan setelah pengerjaan dimulai, DP tidak dikembalikan karena sudah dipakai untuk pekerjaan yang berjalan." }
+]
