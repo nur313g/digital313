@@ -1,0 +1,190 @@
+# Konfigurasi panel Pages CMS untuk website Digital 313
+media:
+  - name: gambar
+    label: Gambar
+    input: gambar
+    output: gambar
+    rename: safe
+    extensions: [png, jpg, jpeg, webp, svg]
+  - name: video
+    label: Video
+    input: video
+    output: video
+    rename: safe
+    extensions: [mp4, webm]
+
+content:
+  - name: pengaturan
+    label: Pengaturan umum
+    type: file
+    path: data/pengaturan.json
+    format: json
+    fields:
+      - name: nama
+        label: Nama / brand
+        type: string
+        required: true
+      - name: logo
+        label: Logo (opsional)
+        type: image
+        options:
+          media: gambar
+        description: Jika kosong, nama brand ditampilkan sebagai teks.
+      - name: judul_utama
+        label: Judul utama di halaman depan
+        type: text
+      - name: teks_pembuka
+        label: Kalimat di bawah judul utama
+        type: text
+      - name: nomor_wa
+        label: Nomor WhatsApp
+        type: string
+        required: true
+        description: Tulis seperti biasa, misalnya 081234567890. Website mengubahnya otomatis ke format yang benar.
+      - name: pesan_wa
+        label: Pesan awal WhatsApp
+        type: text
+        description: Kalimat yang otomatis terisi saat calon klien menekan tombol WhatsApp.
+      - name: alamat
+        label: Alamat (opsional)
+        type: text
+        description: Ditampilkan di bagian kontak. Kosongkan jika tidak ingin menampilkan alamat.
+
+  - name: karya
+    label: Karya digital
+    type: file
+    path: data/karya.json
+    format: json
+    list: true
+    fields:
+      - name: judul
+        label: Judul karya
+        type: string
+        required: true
+      - name: kategori
+        label: Kategori
+        type: string
+        required: true
+        description: Contoh Website, Aplikasi, Ebook, Desain. Tombol filter dibuat otomatis dari kategori yang kamu isi.
+      - name: deskripsi
+        label: Penjelasan singkat
+        type: text
+      - name: gambar
+        label: Gambar karya (atau sampul video)
+        type: image
+        options:
+          media: gambar
+      - name: tipe_video
+        label: Jenis video
+        type: select
+        default: tidak
+        options:
+          values:
+            - name: tidak
+              label: Tanpa video
+            - name: youtube
+              label: Video YouTube
+            - name: file
+              label: File video (MP4 pendek)
+        description: Hanya jenis yang dipilih yang ditampilkan. Kamu bisa berganti kapan saja tanpa menghapus isian lainnya.
+      - name: video_youtube
+        label: Link video YouTube
+        type: string
+        description: Tempel link YouTube, termasuk link Shorts. Video harus mengizinkan penyematan (embed).
+      - name: video_file
+        label: File video (MP4)
+        type: file
+        options:
+          media: video
+        description: Untuk cuplikan pendek saja, sekitar 5-10 detik dan di bawah 10 MB.
+      - name: rasio_video
+        label: Bentuk video
+        type: select
+        default: lebar
+        options:
+          values:
+            - name: lebar
+              label: Lebar (16:9)
+            - name: tegak
+              label: Tegak (9:16, seperti Shorts)
+      - name: link
+        label: Link karya (opsional)
+        type: string
+        description: Harus diawali https://
+
+  - name: jasa
+    label: Jasa
+    type: file
+    path: data/jasa.json
+    format: json
+    list: true
+    fields:
+      - name: judul
+        label: Nama jasa
+        type: string
+        required: true
+      - name: deskripsi
+        label: Penjelasan singkat
+        type: text
+
+  - name: cara-kerja
+    label: Cara kerja
+    type: file
+    path: data/cara-kerja.json
+    format: json
+    list: true
+    fields:
+      - name: judul
+        label: Nama langkah
+        type: string
+        required: true
+      - name: deskripsi
+        label: Penjelasan singkat
+        type: text
+
+  - name: pembayaran
+    label: Ketentuan pembayaran
+    type: file
+    path: data/pembayaran.json
+    format: json
+    list: true
+    fields:
+      - name: judul
+        label: Judul ketentuan
+        type: string
+        required: true
+      - name: deskripsi
+        label: Isi ketentuan
+        type: text
+
+  - name: produk
+    label: Produk digital
+    type: file
+    path: data/produk.json
+    format: json
+    list: true
+    fields:
+      - name: judul
+        label: Nama produk
+        type: string
+        required: true
+      - name: jenis
+        label: Jenis produk
+        type: string
+        description: Contoh Ebook, Kursus Online, Prompt.
+      - name: deskripsi
+        label: Penjelasan singkat
+        type: text
+      - name: harga
+        label: Harga (opsional)
+        type: string
+        description: Contoh Rp 49.000. Kosongkan jika tidak ingin menampilkan harga.
+      - name: gambar
+        label: Gambar produk
+        type: image
+        options:
+          media: gambar
+      - name: link
+        label: Link halaman produk di toko
+        type: string
+        description: Harus diawali https://

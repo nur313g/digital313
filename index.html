@@ -92,6 +92,14 @@
     .card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
     .thumb { aspect-ratio: 16 / 10; display: grid; place-items: center; color: var(--muted); font-size: .9rem; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(135deg, #EDEFF3 0 12px, #F6F7F9 12px 24px); }
     .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb.video { display: block; position: relative; aspect-ratio: 16 / 9; background: #000; }
+    .thumb.video.tegak { aspect-ratio: 9 / 16; }
+    .thumb.video iframe, .thumb.video video { display: block; width: 100%; height: 100%; border: 0; }
+    .thumb.video video { object-fit: contain; }
+    .putar { position: absolute; inset: 0; display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(0, 0, 0, .12); cursor: pointer; }
+    .putar span { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, .95); }
+    .putar svg { width: 26px; height: 26px; margin-left: 3px; fill: var(--ink); }
+    .putar:hover span { background: #fff; }
     .card-body { padding: 1.1rem 1.3rem 1.4rem; display: flex; flex-direction: column; gap: .45rem; }
     .tag { font-size: .88rem; font-weight: 600; color: var(--accent); }
     .card h3 { font-size: 1.3rem; }
@@ -99,6 +107,8 @@
     .link { color: var(--accent); font-weight: 600; text-underline-offset: 4px; }
     .link:hover { color: var(--accent-dark); }
     .card .link { margin-top: .35rem; }
+    .harga { font-weight: 600; color: var(--ink) !important; }
+    .card .btn { align-self: flex-start; margin-top: .6rem; }
 
     .services, .terms { list-style: none; margin: 2rem 0 0; padding: 0; border-top: 1px solid var(--line); }
     .services li { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 1.5rem; align-items: center; padding-block: 1.6rem; border-bottom: 1px solid var(--line); }
@@ -161,6 +171,7 @@
           <li><a href="#jasa">Jasa</a></li>
           <li><a href="#proses">Proses</a></li>
           <li><a href="#pembayaran">Pembayaran</a></li>
+          <li id="nav-produk" hidden><a href="#produk">Produk</a></li>
         </ul>
         <a class="btn btn-primary" data-wa>Chat WhatsApp</a>
       </div>
@@ -236,6 +247,14 @@
         <h2>Ketentuan pembayaran</h2>
         <p class="lead">Supaya sama-sama jelas sejak awal. Rinciannya tetap kita sepakati bersama di penawaran.</p>
         <ul class="terms" id="terms"></ul>
+      </div>
+    </section>
+
+    <section class="section" id="produk" hidden>
+      <div class="wrap">
+        <h2>Produk digital</h2>
+        <p class="lead">Ebook, kursus, dan produk digital lainnya. Pembelian dilakukan di halaman toko yang dituju.</p>
+        <div class="grid" id="produk-grid" style="margin-top:2rem"></div>
       </div>
     </section>
 
@@ -339,6 +358,57 @@
         });
       }
 
+      function tegak(k) { return String(k.rasio_video || "").toLowerCase() === "tegak"; }
+      function idYoutube(u) {
+        u = String(u || "").trim();
+        var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : "";
+      }
+      function jenisVideo(k) {
+        var t = String(k.tipe_video || "").toLowerCase();
+        if (t === "youtube" && idYoutube(k.video_youtube)) return "youtube";
+        if (t === "file" && pathGambar(k.video_file)) return "file";
+        if (!t && idYoutube(k.video_youtube)) return "youtube";
+        return "";
+      }
+      function videoYoutube(k) {
+        var id = idYoutube(k.video_youtube);
+        var thumb = el("div", "thumb video" + (tegak(k) ? " tegak" : ""));
+        var img = document.createElement("img");
+        img.src = pathGambar(k.gambar) || "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg";
+        img.alt = "Cuplikan video: " + (k.judul || "");
+        img.loading = "lazy";
+        var tombol = el("button", "putar");
+        tombol.type = "button";
+        tombol.setAttribute("aria-label", "Putar video: " + (k.judul || ""));
+        tombol.innerHTML = '<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>';
+        tombol.addEventListener("click", function () {
+          var f = document.createElement("iframe");
+          f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
+          f.title = "Video: " + (k.judul || "");
+          f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+          f.allowFullscreen = true;
+          f.referrerPolicy = "strict-origin-when-cross-origin";
+          thumb.innerHTML = "";
+          thumb.appendChild(f);
+        });
+        thumb.append(img, tombol);
+        return thumb;
+      }
+      function videoFile(k) {
+        var thumb = el("div", "thumb video" + (tegak(k) ? " tegak" : ""));
+        var v = document.createElement("video");
+        v.controls = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        v.src = pathGambar(k.video_file);
+        var poster = pathGambar(k.gambar);
+        if (poster) v.poster = poster;
+        v.setAttribute("aria-label", "Video: " + (k.judul || ""));
+        thumb.appendChild(v);
+        return thumb;
+      }
+
       function isiKarya(karya) {
         var filters = document.getElementById("filters");
         var grid = document.getElementById("grid");
@@ -370,16 +440,24 @@
           }
           tampil.forEach(function (k) {
             var card = el("article", "card");
-            var thumb = el("div", "thumb");
-            var src = pathGambar(k.gambar);
-            if (src) {
-              var img = document.createElement("img");
-              img.src = src;
-              img.alt = "Tampilan karya: " + (k.judul || "");
-              img.loading = "lazy";
-              thumb.appendChild(img);
+            var jenis = jenisVideo(k);
+            var thumb;
+            if (jenis === "youtube") {
+              thumb = videoYoutube(k);
+            } else if (jenis === "file") {
+              thumb = videoFile(k);
             } else {
-              thumb.textContent = "Tempat gambar karya";
+              thumb = el("div", "thumb");
+              var src = pathGambar(k.gambar);
+              if (src) {
+                var img = document.createElement("img");
+                img.src = src;
+                img.alt = "Tampilan karya: " + (k.judul || "");
+                img.loading = "lazy";
+                thumb.appendChild(img);
+              } else {
+                thumb.textContent = "Tempat gambar karya";
+              }
             }
             var body = el("div", "card-body");
             if (k.kategori) body.appendChild(el("span", "tag", k.kategori));
@@ -429,14 +507,54 @@
         });
       }
 
+      function isiProduk(items) {
+        var data = daftar(items).filter(function (p) { return p && p.judul; });
+        if (!data.length) return;
+        var grid = document.getElementById("produk-grid");
+        grid.innerHTML = "";
+        data.forEach(function (p) {
+          var card = el("article", "card");
+          var thumb = el("div", "thumb");
+          var src = pathGambar(p.gambar);
+          if (src) {
+            var img = document.createElement("img");
+            img.src = src;
+            img.alt = "Gambar produk: " + p.judul;
+            img.loading = "lazy";
+            thumb.appendChild(img);
+          } else {
+            thumb.textContent = "Tempat gambar produk";
+          }
+          var body = el("div", "card-body");
+          if (p.jenis) body.appendChild(el("span", "tag", p.jenis));
+          body.appendChild(el("h3", "", p.judul));
+          if (p.deskripsi) body.appendChild(el("p", "", p.deskripsi));
+          if (p.harga) body.appendChild(el("p", "harga", p.harga));
+          var link = urlAman(p.link);
+          if (link) {
+            var a = el("a", "btn btn-primary", "Lihat produk");
+            a.href = link;
+            a.target = "_blank";
+            a.rel = "noopener";
+            body.appendChild(a);
+          }
+          card.append(thumb, body);
+          grid.appendChild(card);
+        });
+        document.getElementById("produk").hidden = false;
+        document.getElementById("nav-produk").hidden = false;
+      }
+
       Promise.all([
-        ambil("pengaturan"), ambil("karya"), ambil("jasa"), ambil("cara-kerja"), ambil("pembayaran")
+        ambil("pengaturan"), ambil("karya"), ambil("jasa"), ambil("cara-kerja"), ambil("pembayaran"),
+        ambil("produk").catch(function () { return []; })
       ]).then(function (d) {
         isiPengaturan(d[0]);
         isiKarya(d[1]);
         isiJasa(d[2]);
         isiDaftar("steps", d[3]);
         isiDaftar("terms", d[4]);
+        isiProduk(d[5]);
       }).catch(function () {
         document.getElementById("notice").hidden = false;
       });
